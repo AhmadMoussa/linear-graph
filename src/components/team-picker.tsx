@@ -2,6 +2,7 @@
 
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { GithubLink } from './github-link'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
 import { NEUTRAL } from '@/lib/palette'
@@ -26,6 +27,7 @@ export function TeamPicker() {
           <a href="/api/auth/logout" className="text-xs text-muted hover:text-fg">
             Disconnect
           </a>
+          <GithubLink />
           <ThemeToggle />
         </div>
       </header>

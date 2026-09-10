@@ -2,6 +2,7 @@
 
 import { ChevronLeft, Search } from 'lucide-react'
 import Link from 'next/link'
+import { GithubLink } from './github-link'
 import { StatusIcon } from './status-icon'
 import { ThemeToggle } from './theme-toggle'
 import { COLOR_MODES, type Category, type ColorMode } from '@/lib/color'
@@ -154,7 +155,10 @@ export function Sidebar(p: Props) {
       </div>
 
       <div className="flex items-center justify-between border-t border-line p-3">
-        <ThemeToggle />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <GithubLink className="icon-button" />
+        </div>
         <a href="/api/auth/logout" className="text-xs text-muted hover:text-fg">
           Disconnect
         </a>

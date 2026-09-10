@@ -1,3 +1,4 @@
+import { GithubLink } from './github-link'
 import { Logo } from './logo'
 import { ThemeToggle } from './theme-toggle'
 
@@ -39,6 +40,7 @@ export function Landing({ error, reason, missing }: { error?: string; reason?: s
       <p className="mt-10 max-w-xs text-center text-xs leading-relaxed text-muted">
         Read-only access. Your token is stored encrypted in a cookie in this browser and nowhere else.
       </p>
+      <GithubLink label="Source on GitHub" className="mt-4" />
     </main>
   )
 }

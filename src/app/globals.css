@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-soft: var(--soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+}
+
+:root {
+  --bg: #f4f4f2;
+  --panel: #ffffff;
+  --line: rgba(0, 0, 0, 0.09);
+  --soft: rgba(0, 0, 0, 0.045);
+  --fg: #1b1b1b;
+  --muted: #7a7a78;
+  --accent: #5e6ad2;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  --bg: #0f1012;
+  --panel: #161719;
+  --line: rgba(255, 255, 255, 0.09);
+  --soft: rgba(255, 255, 255, 0.06);
+  --fg: #ededed;
+  --muted: #8f8f8d;
+  --accent: #8b93ff;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+@layer components {
+  .icon-button {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-md text-muted transition hover:bg-soft hover:text-fg;
+  }
+  .button {
+    @apply inline-flex h-9 items-center gap-2 rounded-md bg-fg px-4 text-sm font-medium text-bg transition hover:opacity-85;
+  }
+  .section-title {
+    @apply mb-2 text-[11px] font-medium uppercase tracking-wider text-muted;
+  }
+  /* Panels that float over the canvas */
+  .floating {
+    @apply rounded-xl border border-line bg-panel;
+    box-shadow: var(--shadow);
+  }
+}
+
+/* Rendered issue descriptions */
+.md {
+  @apply text-[13px] leading-relaxed;
+}
+.md :where(p, ul, ol, pre, blockquote, table) {
+  @apply my-2;
+}
+.md :where(h1, h2, h3, h4) {
+  @apply mt-4 mb-1.5 font-semibold;
+}
+.md h1 { @apply text-base; }
+.md h2 { @apply text-[15px]; }
+.md h3, .md h4 { @apply text-sm; }
+.md ul { @apply list-disc pl-5; }
+.md ol { @apply list-decimal pl-5; }
+.md li { @apply my-0.5; }
+.md li:has(> input[type="checkbox"]) { @apply list-none -ml-5; }
+.md input[type="checkbox"] { @apply mr-1.5 align-middle; }
+.md a { @apply text-accent underline underline-offset-2; }
+.md code { @apply rounded bg-soft px-1 py-0.5 font-mono text-[12px]; }
+.md pre { @apply overflow-x-auto rounded-md bg-soft p-3; }
+.md pre code { @apply bg-transparent p-0; }
+.md blockquote { @apply border-l-2 border-line pl-3 text-muted; }
+.md hr { @apply my-3 border-line; }
+.md table { @apply w-full text-left text-xs; }
+.md th, .md td { @apply border-b border-line px-2 py-1 align-top; }
+.md img { @apply max-w-full rounded-md; }

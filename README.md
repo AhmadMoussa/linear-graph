@@ -1,14 +1,30 @@
 # Linear Graph
 
-Explore a Linear team as a force-directed graph. Issues are nodes, sub-issues and relations are links, and color encodes priority, status, project or assignee. Click a node to read it in the side panel.
+Explore a Linear team as an interactive graph. Every issue is a node, sub-issues and relations are links, and color encodes priority, status, project or assignee. Click a node to read it in the side panel.
 
-## Setup
+**Live:** https://lineargraph.vercel.app — sign in with Linear, pick a team, explore. Read-only, no account needed.
 
-1. In Linear, open **Settings → API → OAuth applications** and create an application.
-   - Callback URL: `http://localhost:3000/api/auth/callback` (add your production URL later).
-   - Copy the client ID and client secret.
-2. Copy `.env.example` to `.env.local` and fill in `LINEAR_CLIENT_ID`, `LINEAR_CLIENT_SECRET` and a random `SESSION_SECRET` (`openssl rand -hex 32`).
-3. Install and run:
+## Features
+
+- **Two layouts.** *Radial* hangs top-level issues off a central team hub with sub-issues fanning outward, so hierarchy links never cross. *Force* is a classic physics layout without the hub. Switching morphs one into the other.
+- **Relationships.** Parent/child links, blockers (with arrowheads), related and duplicate issues, each toggleable.
+- **Color modes.** Priority, status, project or assignee, with a clickable legend to hide categories. Completed issues are always green, canceled ones hollow.
+- **Linear's own status icons** in the panel, the legend, and on the nodes when coloring by status — including the pie that fills as a started state sits further along the workflow.
+- **Explore.** Search with fly-to, click to focus a neighbourhood, drag nodes, pan and zoom, and a detail panel with the rendered description, parent, sub-issues and relations.
+- Light and dark mode. No database: the OAuth token lives encrypted in an httpOnly cookie and refreshes itself.
+
+## Run it locally
+
+1. In Linear, open **Settings → API → OAuth applications** and create an application with the callback URL `http://localhost:3000/api/auth/callback`.
+2. Copy `.env.example` to `.env.local` and fill in:
+
+   | Variable | Value |
+   | --- | --- |
+   | `LINEAR_CLIENT_ID` | from the OAuth application |
+   | `LINEAR_CLIENT_SECRET` | from the OAuth application |
+   | `SESSION_SECRET` | any random string, e.g. `openssl rand -hex 32` |
+
+3. Install and start:
 
    ```bash
    npm install
@@ -17,13 +33,26 @@ Explore a Linear team as a force-directed graph. Issues are nodes, sub-issues an
 
 Open http://localhost:3000, connect Linear, and pick a team.
 
-## Deploying
+## Deploy
 
-Set `APP_URL` to the public URL of the deployment and add `<APP_URL>/api/auth/callback` to the OAuth application's callback URLs. Nothing else is required: there is no database, the OAuth token lives encrypted in an httpOnly cookie and is refreshed automatically.
+The app needs a small server for the OAuth exchange, so static hosts such as GitHub Pages won't work; Vercel, Netlify or Cloudflare all do.
+
+1. Import the repository in Vercel.
+2. Add the three variables above plus `APP_URL`, set to the deployment URL (for example `https://lineargraph.vercel.app`).
+3. Add `<APP_URL>/api/auth/callback` to the OAuth application's redirect URIs.
+
+Only the person deploying registers a Linear OAuth application. Visitors just authorize it with one click and see their own workspace.
 
 ## How it works
 
-- `src/lib/linear.ts` talks to Linear's GraphQL API and handles OAuth token exchange and refresh.
-- `src/lib/graph.ts` turns issues into nodes and links around a central team node; `src/lib/layout.ts` computes the radial cluster layout (sub-issues fan out away from the centre, so hierarchy links never cross); `src/lib/color.ts` derives the legend for each color mode.
-- `src/components/graph-view.ts` owns the simulation (nodes are pulled to their layout anchors and kept apart by collision), canvas rendering, and pan/zoom/drag interaction. `graph-canvas.tsx` is the thin React wrapper.
-- `src/components/explorer.tsx` holds the UI state and composes the sidebar, canvas and detail panel.
+| Path | Role |
+| --- | --- |
+| `src/lib/linear.ts` | Linear GraphQL client, OAuth code exchange and token refresh, paginated team fetch |
+| `src/lib/session.ts` | AES-GCM encrypted session cookie |
+| `src/lib/graph.ts`, `src/lib/layout.ts` | Nodes and links, and the radial cluster layout |
+| `src/lib/color.ts` | Legend and colors for each color mode |
+| `src/lib/status-icons.ts` | Path data for Linear's status icons, shared by SVG and canvas |
+| `src/components/graph-view.ts` | d3-force simulation, canvas rendering, pan/zoom/drag |
+| `src/components/explorer.tsx` | UI state; composes the sidebar, canvas and detail panel |
+
+Built with Next.js, React, Tailwind and d3-force.

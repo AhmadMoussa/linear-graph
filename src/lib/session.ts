@@ -25,7 +25,7 @@ let keyPromise: Promise<CryptoKey> | undefined
 function key() {
   return (keyPromise ??= (async () => {
     const secret = process.env.SESSION_SECRET
-    if (!secret || secret.length < 16) throw new Error('SESSION_SECRET must be set to at least 16 characters')
+    if (!secret || secret.length < 16) throw new Error('SESSION_SECRET is not set (needs 16+ characters)')
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret))
     return crypto.subtle.importKey('raw', digest, 'AES-GCM', false, ['encrypt', 'decrypt'])
   })())

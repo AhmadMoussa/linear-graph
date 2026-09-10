@@ -30,8 +30,10 @@ async function requestToken(params: Record<string, string>): Promise<Session> {
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ client_id: id, client_secret: secret, ...params }),
   })
-  if (!res.ok) throw new AuthError(`Linear token request failed (${res.status})`)
-  const json = await res.json()
+  const json = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw new AuthError(`Linear token request failed (${res.status}): ${json.error_description ?? json.error ?? 'no details'}`)
+  }
   return {
     accessToken: json.access_token,
     refreshToken: json.refresh_token,

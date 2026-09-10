@@ -18,7 +18,8 @@ export async function GET(req: NextRequest) {
     res.cookies.delete(STATE_COOKIE)
     return res
   } catch (error) {
-    console.error(error)
-    return NextResponse.redirect(`${base}/?error=token`)
+    console.error('OAuth callback failed:', error)
+    const reason = error instanceof Error ? error.message : 'unknown error'
+    return NextResponse.redirect(`${base}/?error=token&reason=${encodeURIComponent(reason.slice(0, 160))}`)
   }
 }
